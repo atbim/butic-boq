@@ -1,0 +1,13 @@
+const express = require('express')
+const session = require('cookie-session')
+require('dotenv').config()
+const { PORT, SERVER_SESSION_SECRET } = require('./config/aps.js')
+const authRouter = require('./routes/authRouter.js')
+const hubsController = require('./routes/hubsRouter.js')
+
+let app = express()
+app.use(express.static('wwwroot'))
+app.use(session({ secret: SERVER_SESSION_SECRET, maxAge: 24 * 60 * 60 * 1000 }))
+app.use('/api/auth', authRouter)
+app.use('/api/hubs', hubsController)
+app.listen(PORT, () => console.log(`Server listening on port ${PORT}...`))
