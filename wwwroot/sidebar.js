@@ -1,4 +1,4 @@
-async function getJSON(url) {
+const getJSON = async (url) => {
   const resp = await fetch(url)
   if (!resp.ok) {
     alert('Could not load tree data. See console for more details.')
@@ -8,18 +8,18 @@ async function getJSON(url) {
   return resp.json()
 }
 
-function createTreeNode(id, text, icon, children = false) {
+const createTreeNode = (id, text, icon, children = false) => {
   return { id, text, children, itree: { icon } }
 }
 
-async function getHubs() {
+const getHubs = async () => {
   const hubs = await getJSON('/api/hubs')
   return hubs.map((hub) =>
     createTreeNode(`hub|${hub.id}`, hub.attributes.name, 'icon-hub', true)
   )
 }
 
-async function getProjects(hubId) {
+const getProjects = async (hubId) => {
   const projects = await getJSON(`/api/hubs/${hubId}/projects`)
   return projects.map((project) =>
     createTreeNode(
@@ -31,7 +31,7 @@ async function getProjects(hubId) {
   )
 }
 
-async function getContents(hubId, projectId, folderId = null) {
+const getContents = async (hubId, projectId, folderId = null) => {
   const contents = await getJSON(
     `/api/hubs/${hubId}/projects/${projectId}/contents` +
       (folderId ? `?folder_id=${folderId}` : '')
@@ -55,7 +55,7 @@ async function getContents(hubId, projectId, folderId = null) {
   })
 }
 
-async function getVersions(hubId, projectId, itemId) {
+const getVersions = async (hubId, projectId, itemId) => {
   const versions = await getJSON(
     `/api/hubs/${hubId}/projects/${projectId}/contents/${itemId}/versions`
   )
@@ -68,7 +68,14 @@ async function getVersions(hubId, projectId, itemId) {
   )
 }
 
-export function initTree(selector, onSelectionChanged) {
+const getIssues = async (project) => {
+  const containerId = project.split('.')[1]
+  const url = `api/issues/${containerId}`
+  const issues = await getJSON(url)
+  console.log('issues: ', issues)
+}
+
+export const initTree = (selector, onSelectionChanged) => {
   // See http://inspire-tree.com
   const tree = new InspireTree({
     data: function (node) {
@@ -97,10 +104,7 @@ export function initTree(selector, onSelectionChanged) {
     if (datos[0] === 'version') {
       onSelectionChanged(datos[1])
     } else if (datos[0] === 'project') {
-      const containerId = datos[2].split('.')[1]
-      const res = await fetch(`api/issues/${containerId}`)
-      const json = await res.json()
-      console.log('issues: ', json)
+      getIssues(datos[2])
     }
   })
   return new InspireTreeDOM(tree, { target: selector })
