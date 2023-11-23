@@ -15,5 +15,8 @@ router
 router
   .route('/:hub_id/projects/:project_id/contents/:item_id/versions')
   .get(hubsController.getItemVersionsFromAdsk)
+router
+  .route('/:hub_id/projects/:project_id/contents/:item_id/tip')
+  .get(hubsController.getItemTipFromAdsk)
 
 module.exports = router

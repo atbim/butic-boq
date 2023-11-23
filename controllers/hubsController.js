@@ -3,6 +3,7 @@ const {
   getProjects,
   getProjectContents,
   getItemVersions,
+  getItemTip,
 } = require('../services/aps')
 
 const getHubsFromAdsk = async (req, res, next) => {
@@ -53,9 +54,23 @@ const getItemVersionsFromAdsk = async (req, res, next) => {
   }
 }
 
+const getItemTipFromAdsk = async (req, res, next) => {
+  try {
+    const version = await getItemTip(
+      req.params.project_id,
+      req.params.item_id,
+      req.internalOAuthToken
+    )
+    res.json(version.id)
+  } catch (err) {
+    next(err)
+  }
+}
+
 module.exports = {
   getHubsFromAdsk,
   getProjectsFromAdsk,
   getProjectContentsFromAdsk,
   getItemVersionsFromAdsk,
+  getItemTipFromAdsk,
 }

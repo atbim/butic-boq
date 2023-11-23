@@ -9,9 +9,9 @@ try {
     login.innerText = `Logout (${user.name})`
     login.onclick = () => window.location.replace('/api/auth/logout')
     const viewer = await initViewer(document.getElementById('preview'))
-    initTree('#tree', (id) =>
+    initTree('#tree', (id) => {
       loadModel(viewer, window.btoa(id).replace(/=/g, ''))
-    )
+    })
   } else {
     login.innerText = 'Login'
     login.onclick = () => window.location.replace('/api/auth/login')

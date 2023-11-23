@@ -68,6 +68,12 @@ const getVersions = async (hubId, projectId, itemId) => {
   )
 }
 
+const getItemTip = async (hubId, projectId, itemId) => {
+  const url = `/api/hubs/${hubId}/projects/${projectId}/contents/${itemId}/tip`
+  const version = await getJSON(url)
+  return version
+}
+
 const getIssues = async (project) => {
   const containerId = project.split('.')[1]
   const url = `api/issues/${containerId}`
@@ -82,16 +88,16 @@ export const initTree = (selector, onSelectionChanged) => {
       if (!node || !node.id) {
         return getHubs()
       } else {
-        const tokens = node.id.split('|')
-        switch (tokens[0]) {
+        const datos = node.id.split('|')
+        switch (datos[0]) {
           case 'hub':
-            return getProjects(tokens[1])
+            return getProjects(datos[1])
           case 'project':
-            return getContents(tokens[1], tokens[2])
+            return getContents(datos[1], datos[2])
           case 'folder':
-            return getContents(tokens[1], tokens[2], tokens[3])
+            return getContents(datos[1], datos[2], datos[3])
           case 'item':
-            return getVersions(tokens[1], tokens[2], tokens[3])
+            return getVersions(datos[1], datos[2], datos[3])
           default:
             return []
         }
@@ -102,9 +108,14 @@ export const initTree = (selector, onSelectionChanged) => {
     event.preventTreeDefault()
     const datos = node.id.split('|')
     if (datos[0] === 'version') {
+      console.log('datos: ', datos)
       onSelectionChanged(datos[1])
     } else if (datos[0] === 'project') {
       getIssues(datos[2])
+    } else if (datos[0] === 'item') {
+      const version = await getItemTip(datos[1], datos[2], datos[3])
+      onSelectionChanged(version)
+      console.log(version)
     }
   })
   return new InspireTreeDOM(tree, { target: selector })

@@ -29,6 +29,7 @@ service.authCallbackMiddleware = async (req, res, next) => {
   const publicCredentials = await publicAuthClient.refreshToken(
     internalCredentials
   )
+  console.log('internalCredentials: ', internalCredentials)
   req.session.public_token = publicCredentials.access_token
   req.session.internal_token = internalCredentials.access_token
   req.session.refresh_token = publicCredentials.refresh_token
@@ -90,7 +91,7 @@ service.getProjects = async (hubId, token) => {
   const data = resp.body.data.filter(
     (x) => x.id === 'b.7a74e921-70cb-486b-a11b-595330392b00'
   )
-    
+
   return data
 }
 
@@ -123,5 +124,16 @@ service.getItemVersions = async (projectId, itemId, token) => {
     internalAuthClient,
     token
   )
+  return resp.body.data
+}
+
+service.getItemTip = async (projectId, itemId, token) => {
+  const resp = await new APS.ItemsApi().getItemTip(
+    projectId,
+    itemId,
+    internalAuthClient,
+    token
+  )
+
   return resp.body.data
 }
