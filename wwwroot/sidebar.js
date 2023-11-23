@@ -91,11 +91,16 @@ export function initTree(selector, onSelectionChanged) {
       }
     },
   })
-  tree.on('node.click', function (event, node) {
+  tree.on('node.click', async (event, node) => {
     event.preventTreeDefault()
-    const tokens = node.id.split('|')
-    if (tokens[0] === 'version') {
-      onSelectionChanged(tokens[1])
+    const datos = node.id.split('|')
+    if (datos[0] === 'version') {
+      onSelectionChanged(datos[1])
+    } else if (datos[0] === 'project') {
+      const containerId = datos[2].split('.')[1]
+      const res = await fetch(`api/issues/${containerId}`)
+      const json = await res.json()
+      console.log('issues: ', json)
     }
   })
   return new InspireTreeDOM(tree, { target: selector })
