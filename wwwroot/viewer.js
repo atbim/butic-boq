@@ -1,4 +1,5 @@
 /// import * as Autodesk from "@types/forge-viewer";
+import { initTreeBoq } from "./boq.js"
 
 async function getAccessToken(callback) {
   try {
@@ -29,7 +30,10 @@ export function loadModel(viewer, urn) {
     function onDocumentLoadSuccess(doc) {
         const root = doc.getRoot()
         const node = root.getMasterViews()[0]
-    viewer.loadDocumentNode(doc, node)
+      viewer.loadDocumentNode(doc, node)
+      viewer.addEventListener(Autodesk.Viewing.GEOMETRY_LOADED_EVENT, () => {
+        initTreeBoq('#treeBoq', viewer)
+      })
   }
   function onDocumentLoadFailure(code, message) {
     alert('Could not load model. See console for more details.')
