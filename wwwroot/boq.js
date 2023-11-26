@@ -1,6 +1,12 @@
 let _viewer
 const parameter = 'Assembly Code'
 
+const getData = async (url) => {
+  const res = await fetch(url)
+  const json = await res.json()
+  return json.data
+}
+
 const getLeafNodesAsync = () => {
   return new Promise((resolve) => {
     _viewer.model.getObjectTree((tree) => {
@@ -115,6 +121,8 @@ export const initTreeBoq = (selector, viewer) => {
         break
       case 'partida':
         const dbIds = await getDbIdsFromItemAsync(node.id)
+        const data = await getData(`/api/items/${node.id}`)
+        console.log('data: ', data)
         _viewer.isolate(dbIds)
         _viewer.fitToView(dbIds)
         break

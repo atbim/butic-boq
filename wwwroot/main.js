@@ -10,6 +10,7 @@ try {
     login.onclick = () => window.location.replace('/api/auth/logout')
     const viewer = await initViewer(document.getElementById('preview'))
     initTree('#tree', (id) => {
+      console.log('id: ', id)
       loadModel(viewer, window.btoa(id).replace(/=/g, ''))
     })
   } else {
