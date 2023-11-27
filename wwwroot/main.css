@@ -52,13 +52,13 @@ html {
 
 #tree {
     margin: 0.5em;
-    height: calc((100vh - 6em) * 0.4);
+    height: calc((100vh - 6em) * 0.3);
     overflow-y: scroll;
 }
 
 #treeBoq {
     margin: 0.5em;
-    height: calc((100vh - 6em) * 0.6);
+    height: calc((100vh - 6em) * 0.5);
     overflow-y: scroll;
 }
 

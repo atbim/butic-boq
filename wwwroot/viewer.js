@@ -1,5 +1,7 @@
 /// import * as Autodesk from "@types/forge-viewer";
 import { initTreeBoq } from "./boq.js"
+import './extensions/LoggerExtension.js'
+import './extensions/SummaryExtension.js'
 
 async function getAccessToken(callback) {
   try {
@@ -18,7 +20,13 @@ async function getAccessToken(callback) {
 export function initViewer(container) {
   return new Promise(function (resolve, reject) {
     Autodesk.Viewing.Initializer({ getAccessToken }, async function () {
-      const viewer = new Autodesk.Viewing.GuiViewer3D(container)
+      const config = {
+        extensions: [
+          'Autodesk.DocumentBrowser',
+          'SummaryExtension',
+        ],
+      }
+      const viewer = new Autodesk.Viewing.GuiViewer3D(container, config)
       viewer.start()
       viewer.setTheme('light-theme')
       resolve(viewer)

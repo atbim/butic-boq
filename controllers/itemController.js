@@ -2,11 +2,22 @@ const Item = require('../models/Item')
 
 const createItem = async (req, res, next) => {
   try {
-    console.log(req.body)
     const item = await Item.create(req.body)
     res.status(201).json({
       status: 'success',
       data: item,
+    })
+  } catch (err) {
+    next(err)
+  }
+}
+
+const getAllItems = async (req, res, next) => {
+  try {
+    const items = await Item.find()
+    res.status(200).json({
+      status: 'success',
+      data: items,
     })
   } catch (err) {
     next(err)
@@ -32,4 +43,5 @@ const getItemByCode = async (req, res, next) => {
 module.exports = {
   createItem,
   getItemByCode,
+  getAllItems,
 }
