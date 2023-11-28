@@ -20,6 +20,9 @@
     <div id="sidebar">
         <div id="tree"></div>
         <div id="treeBoq"></div>
+        <div>
+            <canvas id="myChart"></canvas>
+        </div>
         <div id="totalAmount"></div>
     </div>
     <div id="preview"></div>
@@ -28,6 +31,29 @@
     <script src="https://unpkg.com/inspire-tree@4.3.1/dist/inspire-tree.js"></script>
     <script src="https://unpkg.com/inspire-tree-dom@4.0.6/dist/inspire-tree-dom.min.js"></script>
     <script src="/main.js" type="module"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const ctx = document.getElementById('myChart');
+
+        new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: ['Walls', 'Floors', 'Roofs', 'Doors', 'Windows'],
+                datasets: [{
+                    label: '# of Instances',
+                    data: [80, 19, 3, 5, 2],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script>
 </body>
 
 </html>
