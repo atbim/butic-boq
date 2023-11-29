@@ -1,5 +1,6 @@
 /// import * as Autodesk from "@types/forge-viewer";
 import { initTreeBoq } from "./boq.js"
+import { initChart } from "./charts.js"
 import './extensions/LoggerExtension.js'
 import './extensions/SummaryExtension.js'
 import './extensions/MiPrimeraExtension.js'
@@ -44,6 +45,7 @@ export function loadModel(viewer, urn) {
       viewer.loadDocumentNode(doc, node)
       viewer.addEventListener(Autodesk.Viewing.GEOMETRY_LOADED_EVENT, () => {
         initTreeBoq('#treeBoq', viewer)
+        //initChart('myChart', viewer)
       })
   }
   function onDocumentLoadFailure(code, message) {
