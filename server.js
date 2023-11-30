@@ -1,5 +1,6 @@
 const express = require('express')
 const session = require('cookie-session')
+// Cargamos variables de entorno si estamos en local
 if (!process.env.NODE_ENV) {
   require('dotenv').config()
 }
