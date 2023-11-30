@@ -1,16 +1,6 @@
-import {
-  getLeafNodesAsync,
-  getCategoriesDataToChartAsync,
-  getWallsLocationLineAsync,
-  hslaStringToRgb,
-} from './utils.js'
+import { hslaStringToRgb } from './utils.js'
 
-export const initChart = async (selector, viewer) => {
-  const dbIds = await getLeafNodesAsync(viewer)
-  //const data = await getCategoriesDataToChartAsync(viewer, dbIds)
-  const data = await getWallsLocationLineAsync(viewer, dbIds)
-  const ctx = document.getElementById(selector)
-
+const prepareDataToChart = (data) => {
   const labels = Array.from(data.keys())
   const values = labels.map((val) => data.get(val).length)
   const backgroundColor = values.map(
@@ -22,17 +12,41 @@ export const initChart = async (selector, viewer) => {
       `hsla(${Math.round(index * (360 / values.length))}, 70%, 50%, 0.7)`
   )
 
-  new Chart(ctx, {
+  return {
+    labels: labels,
+    values: values,
+    backgroundColor: backgroundColor,
+    borderColor: borderColor,
+    borderWidth: 3
+  }
+}
+
+export const updateChart = async (chart, data) => {
+  const pd = prepareDataToChart(data)
+
+  chart.data.labels = pd.labels
+  chart.data.datasets[0].data = pd.values
+  chart.data.datasets[0].borderColor = pd.borderColor
+  chart.data.datasets[0].backgroundColor = pd.backgroundColor
+  chart.update()
+}
+
+export const initChart = async (selector, viewer, data) => {
+  const ctx = document.getElementById(selector)
+
+  const pd = prepareDataToChart(data)
+
+  return new Chart(ctx, {
     type: 'bar',
     data: {
-      labels: labels,
+      labels: pd.labels,
       datasets: [
         {
           label: '# of Instances',
-          data: values,
-          borderWidth: 3,
-          borderColor: borderColor,
-          backgroundColor: backgroundColor,
+          data: pd.values,
+          borderWidth: pd.borderWidth,
+          borderColor: pd.borderColor,
+          backgroundColor: pd.backgroundColor,
         },
       ],
     },
