@@ -1,6 +1,6 @@
 const express = require('express')
 const session = require('cookie-session')
-//require('dotenv').config()
+require('dotenv').config()
 const { PORT, SERVER_SESSION_SECRET } = require('./config/aps.js')
 const connectDb = require('./config/db')
 const authRouter = require('./routes/authRouter.js')

@@ -19,7 +19,8 @@ export class CustomPanel extends Autodesk.Viewing.UI.DockingPanel {
     div.style.margin = '20px'
     if (this.options.isChart) {
       div.innerHTML = `
-        <canvas id="${this.options.divid}"></canvas>`
+        <canvas height="250px" width="750px" id="${this.options.divid}"></canvas>
+        <canvas height="250px" width="750px" id="${this.options.divid2}"></canvas>`
     } else {
       div.id = this.options.divid
     }

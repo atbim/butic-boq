@@ -17,7 +17,7 @@ const prepareDataToChart = (data) => {
     values: values,
     backgroundColor: backgroundColor,
     borderColor: borderColor,
-    borderWidth: 3
+    borderWidth: 3,
   }
 }
 
@@ -59,7 +59,7 @@ export const initChart = async (selector, viewer, data) => {
       onClick: (e, items) => {
         if (items[0]) {
           const index = items[0].index
-          const category = labels[index]
+          const category = pd.labels[index]
           const _dbIds = data.get(category)
           viewer.isolate(_dbIds)
           viewer.fitToView(_dbIds)
