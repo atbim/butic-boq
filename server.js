@@ -11,6 +11,7 @@ const authRouter = require('./routes/authRouter.js')
 const hubsRouter = require('./routes/hubsRouter.js')
 const issuesRouter = require('./routes/issuesRouter.js')
 const itemRouter = require('./routes/itemRouter.js')
+const modelPropertiesRouter = require('./routes/modelPropertiesRouter.js')
 
 // Connect Database
 connectDb();
@@ -23,4 +24,5 @@ app.use('/api/auth', authRouter)
 app.use('/api/hubs', hubsRouter)
 app.use('/api/issues', issuesRouter)
 app.use('/api/items', itemRouter)
+app.use('/api/costmanagement', modelPropertiesRouter)
 app.listen(PORT, () => console.log(`Server listening on port ${PORT}...`))

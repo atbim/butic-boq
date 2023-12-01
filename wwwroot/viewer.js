@@ -42,7 +42,7 @@ export function initViewer(container) {
 export function loadModel(viewer, urn) {
     function onDocumentLoadSuccess(doc) {
         const root = doc.getRoot()
-        const node = root.getMasterViews()[0]
+        const node = root.getDefaultGeometry()
       viewer.loadDocumentNode(doc, node)
       viewer.addEventListener(Autodesk.Viewing.GEOMETRY_LOADED_EVENT, () => {
         initTreeBoq('#treeBoq', viewer)
