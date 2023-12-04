@@ -5,6 +5,30 @@ const { indexAdskUrl } = require('../config/urls')
 const getAmountFromAssemblyCode = async (req, res, next) => {
   try {
     const { assemblycode } = req.params
+    const item = await Item.findOne({ code: assemblycode })
+    if (!item) {
+      res.status(404).json({
+        status: 'error',
+        message: `No se encuentra el Item con Code ${assemblycode}.`,
+      })
+    }
+
+    const headers = {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${req.session.internal_token}`,
+    }
+
+    let field
+    if (item.parameter !== 'Count') {
+      const urlFields = `${indexAdskUrl}/7a74e921-70cb-486b-a11b-595330392b00/indexes/Mrxhz4ypHRZYLHvUYYa1wQ/fields`
+      const respFields = await axios.get(urlFields, { headers })
+      const respLines = respFields.data.trim().split('\n')
+      const fields = respLines.map((line) => JSON.parse(line))
+      field = fields.find(
+        (x) => x.category === 'Dimensions' && x.name === item.parameter
+      )
+    }
+
     const url = `${indexAdskUrl}/7a74e921-70cb-486b-a11b-595330392b00/indexes/Mrxhz4ypHRZYLHvUYYa1wQ/queries`
     const postData = {
       query: {
@@ -17,13 +41,13 @@ const getAmountFromAssemblyCode = async (req, res, next) => {
         ],
       },
       columns: {
-        area: { $sum: 's.props.pcc3750bf' },
+        quantity:
+          item.parameter !== 'Count'
+            ? { $sum: `s.props.${field.key}` }
+            : { $count: 1 },
       },
     }
-    const headers = {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${req.session.internal_token}`,
-    }
+
     const respPostQuery = await axios.post(url, postData, { headers: headers })
     const respQuery = await axios.get(respPostQuery.data.selfUrl, {
       headers: {
@@ -35,18 +59,11 @@ const getAmountFromAssemblyCode = async (req, res, next) => {
         Authorization: `Bearer ${req.session.internal_token}`,
       },
     })
-    const item = await Item.findOne({ code: assemblycode })
-    if (!item) {
-      res.status(404).json({
-        status: 'error',
-        message: `No se encuentra el Item con Code ${assemblycode}.`,
-      })
-    }
 
-    const quantity = respResult.data.area
+    const quantity = respResult.data.quantity
     const price = item.price
     const amount = quantity * price
-    res.status(200).json({amount})
+    res.status(200).json({ quantity, price, amount, paramter: item.parameter })
   } catch (err) {
     next(err)
   }

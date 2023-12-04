@@ -1,4 +1,4 @@
-import { getLeafNodesAsync } from "./utils.js"
+import { getLeafNodesAsync } from './utils.js'
 
 let _viewer
 const parameter = 'Assembly Code'
@@ -128,6 +128,48 @@ const getTotalAmountAsync = async () => {
 }
 
 export const initTreeBoq = (selector, viewer) => {
+  const exportBoqButton = document.getElementById('exportBoQ')
+  exportBoqButton.addEventListener('click', async () => {
+    const capitulos = await getCapitulos()
+    const boq = capitulos.map((x) => ({
+      nat: 'Capitulo',
+      cod: x.id,
+      name: x.text,
+      partidas: [],
+    }))
+    for (const cap of boq) {
+      const partidas = await getPartidas(cap.cod)
+      cap.partidas = partidas.map((x) => ({ nat: 'Partida', cod: x.id, quantity: 0.0 }))
+      for (const partida of cap.partidas) {
+        const dbIds = await getDbIdsFromItemAsync(partida.cod)
+        const item = await getData(`/api/items/${partida.cod}`)
+        if (item) {
+          const quantity =
+            item.parameter === 'Count'
+              ? dbIds.length
+              : await getQuantityFromItemAsync(dbIds, item.parameter)
+          partida.quantity = quantity
+        }
+      }
+    }
+    
+    const data = {
+      nombreLibro: 'BoqFromViewer',
+      nombreHoja: 'BoQ',
+      data: boq,
+    }
+
+    const url = '/api/excel'
+    await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data)
+    })
+  })
+  exportBoqButton.hidden = false
+
   _viewer = viewer
   totalAmountHtml = document.getElementById('totalAmount')
   totalAmountHtml.textContent = 'Calculando Importe total...'
